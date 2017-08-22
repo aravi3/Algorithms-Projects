@@ -42,15 +42,34 @@ class BinaryMinHeap
     prc ||= Proc.new { |x, y| x <=> y }
     parent_idx ||= 0
 
-    while parent_idx < len
-      self.child_indices(len, parent_idx).each do |child_idx|
-        if prc.call(array[parent_idx], array[child_idx]) == 1
-          array[parent_idx], array[child_idx] = array[child_idx], array[parent_idx]
-          break
-        end
+    while parent_idx < (len - 1)
+      count = 0
+
+      children = self.child_indices(len, parent_idx)
+      break if children[0].nil? && children[1].nil?
+
+      if children[1]
+        smallest = prc.call(array[children[0]], array[children[1]]) == -1 ? children[0] : children[1]
+      else
+        smallest = children[0]
       end
 
-      parent_idx += 1
+      if prc.call(array[parent_idx], array[smallest]) == 1
+        count += 1
+        array[parent_idx], array[smallest] = array[smallest], array[parent_idx]
+        parent_idx = smallest
+      end
+
+      # self.child_indices(len, parent_idx).each do |child_idx|
+      #   if prc.call(array[parent_idx], array[child_idx]) == 1
+      #     count += 1
+      #     array[parent_idx], array[child_idx] = array[child_idx], array[parent_idx]
+      #     parent_idx = child_idx
+      #     break
+      #   end
+      # end
+
+      break if count == 0
     end
 
     array
@@ -63,9 +82,10 @@ class BinaryMinHeap
     while child_idx > 0
       if prc.call(array[self.parent_index(child_idx)], array[child_idx]) == 1
         array[self.parent_index(child_idx)], array[child_idx] = array[child_idx], array[self.parent_index(child_idx)]
+        child_idx = self.parent_index(child_idx)
+      else
+        break
       end
-
-      child_idx -= 1
     end
 
     array

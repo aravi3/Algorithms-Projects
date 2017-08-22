@@ -1,19 +1,17 @@
 require_relative 'heap'
+require_relative 'heap_sort'
 
 def k_largest_elements(array, k)
+  array.heap_sort!.reverse!
   result = []
-
-  len = array.length
-  BinaryMinHeap.heapify_up(array, len - 1, len)
+  idx = 0
 
   while result.length != k
-    array[len - 1], array[0] = array[0], array[len - 1]
-    result.push(array[len - 1])
-    len -= 1
-    BinaryMinHeap.heapify_up(array, len - 1, len)
+    result.push(array[idx])
+    idx += 1
   end
 
   result
 end
 
-p k_largest_elements([2, 3, 4, 6, -1, 4], 4)
+p k_largest_elements([2, 3, 4, 6, -1, 4], 3)
